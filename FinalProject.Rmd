@@ -13,3 +13,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 For this project, we have found a very vast dataset regarding the FIA Formula 1 World Championship which contains Driver and Constructor information as well as, lap times, race results, and pit stop data from the inaugural season of the FIA Formula 1 World Championship, 1950, all the way up to the end of the 2023 season. With this dataset, we are striving to find and assess any connections that may be found that can show the relationships between pit stop times and race success, lap time falloff and race success, etc. 
 
+## Step 1: Loading Data 
+
+```{r}
+circuits <- read.csv('circuits.csv', header = TRUE)
+const_results <- read.csv('constructor_results.csv', header = TRUE)
+const_standings <- read.csv('constructor_standings.csv', header = TRUE)
+constructors <- read.csv('constructors.csv', header = TRUE)
+driver_standings <- read.csv('driver_standings.csv', header = TRUE)
+drivers <- read.csv('drivers.csv', header = TRUE)
+lap_times <- read.csv('lap_times.csv', header = TRUE)
+pit_stops <- read.csv('pit_stops.csv', header = TRUE)
+qualifying <- read.csv('qualifying.csv', header = TRUE)
+races <- read.csv('races.csv', header = TRUE)
+results <- read.csv('results.csv', header = TRUE)
+seasons <- read.csv('seasons.csv', header = TRUE)
+sprint_results <- read.csv('sprint_results.csv', header = TRUE)
+status <- read.csv('status.csv', header = TRUE)
+```
