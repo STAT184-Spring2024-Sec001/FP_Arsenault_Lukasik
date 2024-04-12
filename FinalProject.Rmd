@@ -28,6 +28,5 @@ qualifying <- read.csv('qualifying.csv', header = TRUE)
 races <- read.csv('races.csv', header = TRUE)
 results <- read.csv('results.csv', header = TRUE)
 seasons <- read.csv('seasons.csv', header = TRUE)
-sprint_results <- read.csv('sprint_results.csv', header = TRUE)
 status <- read.csv('status.csv', header = TRUE)
 ```
