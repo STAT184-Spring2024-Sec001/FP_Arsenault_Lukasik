@@ -11,11 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## STAT184 Final Project: Analyzing Data From the FIA Formula 1 World Championship
 
-<<<<<<< HEAD
-For this project, we have found a very vast dataset regarding the FIA Formula 1 World Championship which contains Driver and Constructor information as well as, lap times, race results, and pit stop data from the inaugural season of the FIA Formula 1 World Championship, 1950, all the way up to the end of the 2023 season. With this dataset, we are striving to find and assess any connections that may be found that can show the relationships between pit stop times and race success, lap time falloff and race success, etc.
-
-## Step 1: Loading Data
-=======
 For this project, we have found a very vast dataset regarding the FIA Formula 1 World Championship which contains Driver and Constructor information as well as, lap times, race results, and pit stop data from the inaugural season of the FIA Formula 1 World Championship, 1950, all the way up to the end of the 2023 season. With this dataset, we are striving to find and assess any connections that may be found that can show the relationships lap times and race success, along with how well consistent lap times lead to better team performance. 
 
 ## Step 1: Loading Data and Necessary Libraries
@@ -26,7 +21,7 @@ library(dplyr)
 library(janitor)
 library(knitr)
 ```
->>>>>>> 473eaf87b7c7b430a99ba18eaa634d683bbe635a
+
 
 ```{r}
 circuits <- read.csv('circuits.csv', header = TRUE)
@@ -44,34 +39,9 @@ seasons <- read.csv('seasons.csv', header = TRUE)
 status <- read.csv('status.csv', header = TRUE)
 ```
 
-<<<<<<< HEAD
-```{r}
-# Load required libraries
-library(ggplot2)
-
-# Assuming 'pit_stops' and 'results' datasets are already loaded
-
-# Merge 'pit_stops' with 'results' to get race outcomes
-merged_data <- merge(pit_stops, results, by = "raceId")
-
-# Filter data for completed races (exclude races where status is not 'Finished')
-completed_races <- merged_data[merged_data$statusId == 1, ]
-
-# Check the column names of the merged dataset
-colnames(completed_races)
-
-# Create a scatter plot to visualize the relationship between pit stop time and race position
-ggplot(completed_races, aes(x = milliseconds, y = positionOrder)) +
-  geom_point(alpha = 0.6) +
-  labs(x = "Pit Stop Time (milliseconds)", y = "Race Position") +
-  ggtitle("Relationship Between Pit Stop Time and Race Position") +
-  theme_minimal()
-
-```
-=======
-## Investigating the data
 
 The first insight into lap times we planned on finding was how lap times have gotten faster over the long history of Formula 1. To investigate this, we will first filter our data so that we have the fastest lap time from every season of F1 at Monza. We have keened in on this circuit in particular because it has been a mainstay in nearly every Formula 1 season, only not having a race held there in the 1980 season. Once we have a data frame containing just information regarding the fastest lap time at Monza every season, we can make a line graph and look for trends.
+
 
 ```{r}
 simplified_races <- races %>% # simplifying the 'races' table for use later on
@@ -98,6 +68,3 @@ ggplot(monza_fastest_laps, aes(x = year, y = fastestLapTime)) +
 
 
 
-
-
->>>>>>> 473eaf87b7c7b430a99ba18eaa634d683bbe635a
