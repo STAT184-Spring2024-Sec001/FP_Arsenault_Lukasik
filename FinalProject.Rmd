@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## STAT184 Final Project: Analyzing Data From the FIA Formula 1 World Championship
 
-For this project, we have found a very vast dataset regarding the FIA Formula 1 World Championship which contains Driver and Constructor information as well as, lap times, race results, and pit stop data from the inaugural season of the FIA Formula 1 World Championship, 1950, all the way up to the end of the 2023 season. With this dataset, we are striving to find and assess any connections that may be found that can show the relationships lap times and race success, along with how well consistent lap times lead to better team performance. 
+For this project, we have found a very vast dataset regarding the FIA Formula 1 World Championship which contains Driver and Constructor information as well as, lap times, race results, and pit stop data from the inaugural season of the FIA Formula 1 World Championship, 1950, all the way up to the end of the 2023 season. With this dataset, we are striving to find and assess any connections that may be found that can show the relationships lap times and race success, along with qualifying performance and how well qualifying sets the driver up for success in the race. Lastly, we hope to look for any trends over the history of F1 that effect on track performance. 
 
 ## Step 1: Loading Data and Necessary Libraries
 
@@ -65,31 +65,35 @@ ggplot(monza_fastest_laps, aes(x = year, y = fastestLapTime)) +
         plot.title = element_text(size = 16, face = "bold")) # plot title size and style
 ```
 
-Above, we can see that, since the year 2004 when the FIA started consistently keeping track of lap times, the cars have gotten overall slower than they were in the early 2000s.
+Above, we can see that, since the year 2004 when the FIA started consistently keeping track of lap times, the cars have gotten overall slower than they were in the early 2000s. Now that we generally know the trend of lap times over the years, we can look more in depth at different statistics. 
 
 
-Now, we can see, how often the driver who holds the title for the fastest lap time in a race, wins that race, along with how many times that driver has pulled off that feat. 
+Now, we will see how often the driver who holds the title for the fastest lap time in a race, wins that race, along with how many times that driver has pulled off that feat. 
+
+Furthermore, we can also count the number of races since 2004 and then keep track of the percentage of times the fastest lap has converted into a race win. 
 
 ```{r}
-fastest_lap_wins <- results %>%
-  filter(rank == 1) %>%
-  filter(positionOrder == 1) %>%
-  left_join(drivers, by = 'driverId') %>%
-  distinct(raceId, forename, surname, fastestLapTime)
+fastest_lap_wins <- results %>% # create a new data frame with just drivers who have won with the fastest lap
+  filter(rank == 1) %>% # filter it so only fastest lap rows appear
+  filter(positionOrder == 1) %>% # filter it so only winning drivers rows appear
+  left_join(drivers, by = 'driverId') %>% # merge so that we can get the drivers name as well
+  distinct(raceId, forename, surname, fastestLapTime) # pick out the information we need 
 
-races_since_2004 <- races %>%
+races_since_2004 <- races %>% # use this to calculate percentage later
   filter(year >= 2004)
 
-summary_table <- fastest_lap_wins %>%
-  tabyl(surname) %>%
-  adorn_totals() %>%
-  arrange(desc(n)) %>%
-  rename("Surname" = surname, "Count" = n) %>%
-  select(Surname, Count) %>%
-  mutate(Percentage = round(Count / nrow(races_since_2004), 3))
+summary_table <- fastest_lap_wins %>% # create a summary table
+  tabyl(surname) %>% # group by surname
+  adorn_totals() %>% # get the totals 
+  arrange(desc(n)) %>% # sort from most to least
+  rename("Surname" = surname, "Count" = n) %>% # rename columns for viewer
+  select(Surname, Count) %>% # drop the percentage
+  mutate("Percentage of All Races Since '04" = round(Count / nrow(races_since_2004), 3)) # create the new appropriate percentage 
   
-# Rendering the summary table using knitr
+# rendering the summary table using knitr
 kable(summary_table, caption = "Most Wins While Simulataneously Winning Fastest Lap")
 ```
 
+From this table, we can see that the driver with the fastest lap has won the same grand prix in around 31% of races since the year 2004. Along with that, we can see the different drivers who have done it the most time. From this, we learn the importance of recording fast lap times as, like said earlier, the driver with the highest chance of winning most of the time holds the title of the fastest lap. 
 
+From here, we can continue to look at other statistics and how they effect the outcome in the race. The next visualization will look at qualifying time and how often qualifying each first, second, third, fourth, and fifth generates a race win.  
