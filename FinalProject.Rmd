@@ -65,6 +65,31 @@ ggplot(monza_fastest_laps, aes(x = year, y = fastestLapTime)) +
         plot.title = element_text(size = 16, face = "bold")) # plot title size and style
 ```
 
+Above, we can see that, since the year 2004 when the FIA started consistently keeping track of lap times, the cars have gotten overall slower than they were in the early 2000s.
 
+
+Now, we can see, how often the driver who holds the title for the fastest lap time in a race, wins that race, along with how many times that driver has pulled off that feat. 
+
+```{r}
+fastest_lap_wins <- results %>%
+  filter(rank == 1) %>%
+  filter(positionOrder == 1) %>%
+  left_join(drivers, by = 'driverId') %>%
+  distinct(raceId, forename, surname, fastestLapTime)
+
+races_since_2004 <- races %>%
+  filter(year >= 2004)
+
+summary_table <- fastest_lap_wins %>%
+  tabyl(surname) %>%
+  adorn_totals() %>%
+  arrange(desc(n)) %>%
+  rename("Surname" = surname, "Count" = n) %>%
+  select(Surname, Count) %>%
+  mutate(Percentage = round(Count / nrow(races_since_2004), 3))
+  
+# Rendering the summary table using knitr
+kable(summary_table, caption = "Most Wins While Simulataneously Winning Fastest Lap")
+```
 
 
