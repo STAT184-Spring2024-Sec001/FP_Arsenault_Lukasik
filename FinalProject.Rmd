@@ -97,3 +97,42 @@ kable(summary_table, caption = "Most Wins While Simulataneously Winning Fastest 
 From this table, we can see that the driver with the fastest lap has won the same grand prix in around 31% of races since the year 2004. Along with that, we can see the different drivers who have done it the most time. From this, we learn the importance of recording fast lap times as, like said earlier, the driver with the highest chance of winning most of the time holds the title of the fastest lap. 
 
 From here, we can continue to look at other statistics and how they effect the outcome in the race. The next visualization will look at qualifying time and how often qualifying each first, second, third, fourth, and fifth generates a race win.  
+
+
+
+
+From here, we can continue to look at other statistics and how they affect the outcome in the race. The next visualization will look at qualifying time and how often qualifying each first, second, third, fourth, and fifth generates a race win. We will make a bar graph to display the amount of times the qualifying positions of 1st - 5th actually won the race.
+
+```{r}
+# Filter qualifying positions 1st to 5th
+qualifying_positions <- qualifying %>%
+  filter(position <= 5)
+
+# Join with results on raceId and driverId
+qualifying_results <- qualifying_positions %>%
+  inner_join(results, by = c("raceId", "driverId"))
+
+# Filter where positionOrder is 1 (indicating the driver won the race)
+qualifying_winners <- qualifying_results %>%
+  filter(positionOrder == 1)
+
+# Count the number of race wins for each qualifying position
+win_counts <- qualifying_winners %>%
+  group_by(position.x) %>%
+  summarize(race_wins = n())
+
+# Make a bar graph using ggplot
+ggplot(win_counts, aes(x = factor(position.x), y = race_wins)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(x = "Qualifying Position", y = "Number of Race Wins", 
+       title = "Race Wins by Qualifying Position (1st to 5th)") +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 12), 
+        axis.title = element_text(size = 14), 
+        plot.title = element_text(size = 16, face = "bold"))
+
+```
+
+
+As we can see from the above bar graph, a majority of the time the racer who is in the 1st qualifying position will actually win the race. The number of wins rapidly decreases as each qualifying postion increases. There could be a variety of factors that contributed to the 1st qualifying positon winning the most races. The main factor definitely would be the driver skill because the driver had to do something in order to get that high of a qualifying position for that specfic race. If you did not know the qualifying position is similar to a ranking system in sports. The highest ranked driver for that specific race will get the highest qualifying position. This allows that driver to get a bit of a head start on top of all the other drivers that are participating in that race. 
+
