@@ -130,7 +130,7 @@ win_counts <- qualifying_winners %>%
 # Create a new category for all other qualifying positions
 other_positions <- qualifying %>%
   filter(!(position %in% 1:5)) %>%
-  mutate(position.x = "Other")
+  mutate(position.x = "Other (6-28)")
 
 # Join with results on raceId and driverId
 other_results <- other_positions %>%
@@ -168,5 +168,8 @@ ggplot(combined_win_counts, aes(x = factor(position.x), y = race_wins, fill = fa
 ```
 
 
-As we can see from the above bar graph, a majority of the time the racer who is in the 1st qualifying position will actually win the race. The number of wins rapidly decreases as each qualifying postion increases. There could be a variety of factors that contributed to the 1st qualifying positon winning the most races. The main factor definitely would be the driver skill because the driver had to do something in order to get that high of a qualifying position for that specfic race. If you did not know the qualifying position is similar to a ranking system in sports. The highest ranked driver for that specific race will get the highest qualifying position. This allows that driver to get a bit of a head start on top of all the other drivers that are participating in that race. 
+As we can see from the above bar graph, a majority of the time the racer who is in the 1st qualifying position will actually win the race. The number of wins rapidly decreases as each qualifying postion increases. There could be a variety of factors that contributed to the 1st qualifying positon winning the most races. The main factor definitely would be the driver skill because the driver had to do something in order to get that high of a qualifying position for that specific race. If you did not know the qualifying position is similar to a ranking system in sports. The highest ranked driver for that specific race will get the highest qualifying position. This allows that driver to get a bit of a head start on top of all the other drivers that are participating in that race.
+
+
+We also did calculations for all other drivers in the race (qualifying places 6-28). As you can see in the above graph the category of 6-28 is smaller than 1st, 2nd, and 3rd qualifying places. This gives even more evidence that higher qualifying drivers (specifically 1st-3rd) are going to win the race. We did the calculation of the drivers 6-28 by filtering the positions not in the qualifying places. Then we calculated the count of the race wins for every driver in that category.
 
