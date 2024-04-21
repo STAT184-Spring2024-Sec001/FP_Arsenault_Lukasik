@@ -122,20 +122,43 @@ qualifying_results <- qualifying_positions %>%
 qualifying_winners <- qualifying_results %>%
   filter(positionOrder == 1)
 
-# Count the number of race wins for each qualifying position
+# Calculate the number of race wins for each qualifying position
 win_counts <- qualifying_winners %>%
   group_by(position.x) %>%
   summarize(race_wins = n())
 
+# Create a new category for all other qualifying positions
+other_positions <- qualifying %>%
+  filter(!(position %in% 1:5)) %>%
+  mutate(position.x = "Other")
+
+# Join with results on raceId and driverId
+other_results <- other_positions %>%
+  inner_join(results, by = c("raceId", "driverId"))
+
+# Filter where positionOrder is 1 (indicating the driver won the race)
+other_winners <- other_results %>%
+  filter(positionOrder == 1)
+
+# Calculate the number of race wins for "Other" qualifying positions
+other_win_counts <- other_winners %>%
+  group_by(position.x.x) %>%
+  summarize(race_wins = n()) %>%
+  rename("position.x" = position.x.x)
+
+# Combine win_counts and other_win_counts
+win_counts$position.x <- as.character(win_counts$position.x)
+combined_win_counts <- bind_rows(win_counts, other_win_counts)
+
 # Create a vector of colors
-bar_colors <- c("skyblue", "lightgreen", "orange", "pink", "purple")
+bar_colors <- c("skyblue", "lightgreen", "orange", "pink", "purple", "gray")  # Add a color for "Other"
 
 # Make the bar graph with ggplot2
-ggplot(win_counts, aes(x = factor(position.x), y = race_wins, fill = factor(position.x))) +
+ggplot(combined_win_counts, aes(x = factor(position.x), y = race_wins, fill = factor(position.x))) +
   geom_bar(stat = "identity") +
   scale_fill_manual(values = bar_colors) +  # Apply custom colors
   labs(x = "Qualifying Position", y = "Number of Race Wins", 
-       title = "Race Wins by Qualifying Position (1st to 5th)") +
+       title = "Race Wins by Qualifying Position") +
   theme_minimal() +
   theme(axis.text = element_text(size = 14), 
         axis.title = element_text(size = 18), 
