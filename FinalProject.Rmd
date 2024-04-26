@@ -11,11 +11,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## STAT184 Final Project: Analyzing Data From the FIA Formula 1 World Championship
 
-For this project, we have found a very vast dataset regarding the FIA Formula 1 World Championship which contains Driver and Constructor information as well as, lap times, race results, and pit stop data from the inaugural season of the FIA Formula 1 World Championship, 1950, all the way up to the end of the 2023 season. With this dataset, we are striving to find and assess any connections that may be found that can show the relationships lap times and race success, along with qualifying performance and how well qualifying sets the driver up for success in the race. Lastly, we hope to look for any trends over the history of F1 that effect on track performance. 
+For this project, we have found a very vast dataset regarding the FIA Formula 1 World Championship which contains Driver and Constructor information as well as, lap times, race results, and pit stop data from the inaugural season of the FIA Formula 1 World Championship, 1950, all the way up to the end of the 2023 season. With this dataset, we are striving to find and assess any connections that may be found that can show the relationships lap times and race success, along with qualifying performance and how well qualifying sets the driver up for success in the race. Lastly, we hope to look for any trends over the history of F1 that effect on track performance.
 
 Link to the dataset:
 
-https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020?select=results.csv 
+<https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020?select=results.csv>
 
 ## Step 1: Loading Data and Necessary Libraries
 
@@ -26,7 +26,6 @@ library(janitor)
 library(kableExtra)
 library(knitr)
 ```
-
 
 ```{r}
 circuits <- read.csv('circuits.csv', header = TRUE)
@@ -44,9 +43,7 @@ seasons <- read.csv('seasons.csv', header = TRUE)
 status <- read.csv('status.csv', header = TRUE)
 ```
 
-
 The first insight into lap times we planned on finding was how lap times have gotten faster over the long history of Formula 1. To investigate this, we will first filter our data so that we have the fastest lap time from every season of F1 at Monza. We have keened in on this circuit in particular because it has been a mainstay in nearly every Formula 1 season, only not having a race held there in the 1980 season. Once we have a data frame containing just information regarding the fastest lap time at Monza every season, we can make a line graph and look for trends.
-
 
 ```{r}
 simplified_races <- races %>% # simplifying the 'races' table for use later on
@@ -70,11 +67,11 @@ ggplot(monza_fastest_laps, aes(x = year, y = fastestLapTime)) +
         plot.title = element_text(size = 20, face = "bold")) # plot title size and style
 ```
 
-Above, we can see that, since the year 2004 when the FIA started consistently keeping track of lap times, the cars have gotten overall slower than they were in the early 2000s. Now that we generally know the trend of lap times over the years, we can look more in depth at different statistics. 
+Above, we can see that, since the year 2004 when the FIA started consistently keeping track of lap times, the cars have gotten overall slower than they were in the early 2000s. Now that we generally know the trend of lap times over the years, we can look more in depth at different statistics.
 
-Now, we will see how often the driver who holds the title for the fastest lap time in a race, wins that race, along with how many times that driver has pulled off that feat. 
+Now, we will see how often the driver who holds the title for the fastest lap time in a race, wins that race, along with how many times that driver has pulled off that feat.
 
-Furthermore, we can also count the number of races since 2004 and then keep track of the percentage of times the fastest lap has converted into a race win. 
+Furthermore, we can also count the number of races since 2004 and then keep track of the percentage of times the fastest lap has converted into a race win.
 
 ```{r}
 fastest_lap_wins <- results %>% # create a new data frame with just drivers who have won with the fastest lap
@@ -100,19 +97,20 @@ kable(summary_table) %>%
   add_header_above(c("Most Wins While Simultaneously Winning Fastest Lap" = 3))
 ```
 
-From this table, we can see that the driver with the fastest lap has won the same grand prix in around 31% of races since the year 2004. Along with that, we can see the different drivers who have done it the most time. From this, we learn the importance of recording fast lap times as, like said earlier, the driver with the highest chance of winning most of the time holds the title of the fastest lap. 
+From this table, we can see that the driver with the fastest lap has won the same grand prix in around 31% of races since the year 2004. Along with that, we can see the different drivers who have done it the most time. From this, we learn the importance of recording fast lap times as, like said earlier, the driver with the highest chance of winning most of the time holds the title of the fastest lap.
 
-From here, we can continue to look at other statistics and how they effect the outcome in the race. The next visualization will look at qualifying time and how often qualifying each first, second, third, fourth, and fifth generates a race win.  
+From here, we can continue to look at other statistics and how they effect the outcome in the race. The next visualization will look at qualifying time and how often qualifying each first, second, third, fourth, and fifth generates a race win.
 
+# Examining Qualifying Position
 
+## Qualifying Positions Impact on Race Wins
 
-
-From here, we can continue to look at other statistics and how they affect the outcome in the race. The next visualization will look at qualifying time and how often qualifying each first, second, third, fourth, and fifth generates a race win. We will make a bar graph to display the amount of times the qualifying positions of 1st - 5th actually won the race.
+From here, we can continue to look at other statistics and how they affect the outcome in the race. The next visualization will look at qualifying time and how often qualifying each first, second, third, fourth, and fifth generates a race win. We will make a bar graph to display the amount of times the qualifying positions of 1st - 5th actually won the race. We also can filter the drivers in qualifying positions 6-28 and add there wins to see how there total count if wins compares to the drivers in the qualifying positions 1st-5th.
 
 ```{r}
 # Filter qualifying positions 1st to 5th
 qualifying_positions <- qualifying %>%
-  filter(position <= 5)
+  filter(position <= 5) # Filter the qualifying positions 1st-5th
 
 # Join with results on raceId and driverId
 qualifying_results <- qualifying_positions %>%
@@ -160,16 +158,13 @@ ggplot(combined_win_counts, aes(x = factor(position.x), y = race_wins, fill = fa
   labs(x = "Qualifying Position", y = "Number of Race Wins", 
        title = "Race Wins by Qualifying Position") +
   theme_minimal() +
-  theme(axis.text = element_text(size = 14), 
+  theme(axis.text = element_text(size = 14), # Change font sizes
         axis.title = element_text(size = 18), 
         plot.title = element_text(size = 20, face = "bold"),
         legend.position = "none") +  # Remove legend
   guides(fill = 'none')  # Remove fill guide
 ```
 
-
 As we can see from the above bar graph, a majority of the time the racer who is in the 1st qualifying position will actually win the race. The number of wins rapidly decreases as each qualifying postion increases. There could be a variety of factors that contributed to the 1st qualifying positon winning the most races. The main factor definitely would be the driver skill because the driver had to do something in order to get that high of a qualifying position for that specific race. If you did not know the qualifying position is similar to a ranking system in sports. The highest ranked driver for that specific race will get the highest qualifying position. This allows that driver to get a bit of a head start on top of all the other drivers that are participating in that race.
 
-
 We also did calculations for all other drivers in the race (qualifying places 6-28). As you can see in the above graph the category of 6-28 is smaller than 1st, 2nd, and 3rd qualifying places. This gives even more evidence that higher qualifying drivers (specifically 1st-3rd) are going to win the race. We did the calculation of the drivers 6-28 by filtering the positions not in the qualifying places. Then we calculated the count of the race wins for every driver in that category.
-
