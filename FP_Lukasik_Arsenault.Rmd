@@ -2,13 +2,11 @@
 title: "Final Project"
 author: "Jacob Lukasik and Will Arsenault"
 date: "2024-04-12"
-output:
-  html_document:
-    code_folding: hide
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## STAT184 Final Project: Analyzing Data From the FIA Formula 1 World Championship
@@ -170,82 +168,3 @@ ggplot(combined_win_counts, aes(x = factor(position.x), y = race_wins, fill = fa
 As we can see from the above bar graph, a majority of the time the racer who is in the 1st qualifying position will actually win the race. The number of wins rapidly decreases as each qualifying postion increases. There could be a variety of factors that contributed to the 1st qualifying positon winning the most races. The main factor definitely would be the driver skill because the driver had to do something in order to get that high of a qualifying position for that specific race. If you did not know the qualifying position is similar to a ranking system in sports. The highest ranked driver for that specific race will get the highest qualifying position. This allows that driver to get a bit of a head start on top of all the other drivers that are participating in that race.
 
 We also did calculations for all other drivers in the race (qualifying places 6-28). As you can see in the above graph the category of 6-28 is smaller than 1st, 2nd, and 3rd qualifying places. This gives even more evidence that higher qualifying drivers (specifically 1st-3rd) are going to win the race. We did the calculation of the drivers 6-28 by filtering the positions not in the qualifying places. Then we calculated the count of the race wins for every driver in that category.
-
-To better understand the bar graph above, we can also display the qualifying to race wins result as a frequency table:
-
-```{r}
-total_races_qualifying <- sum(combined_win_counts$race_wins) # add up the total number of races for percentage variable
-qualifying_table <- combined_win_counts %>% # use dplyr forward pipe operator to create table
-  group_by(position.x) %>% # group by qualifying position
-  summarize(total_race_wins = sum(race_wins)) %>% # creating the race wins column
-  mutate("Percent" = round(100*total_race_wins/total_races_qualifying, 2)) %>% #adding a percentage column
-  rename("Qualifying Position" = position.x, "Race Wins" = total_race_wins) # renaming for better readability
-
-# rendering the summary table using kable
-kable(qualifying_table) %>%
-  kable_styling(font_size = 24, full_width = TRUE) %>%
-  add_header_above(c("Number of Race Wins By Qualifying Position" = 3))
-```
-
-From the table above to help us better quantify the bar graph from earlier, we can see even more of a strong correlation between a good qualifying position and having a better chance to win the race. In a practical sense, this information would be good for drivers and teams alike as it shows that qualifying is almost as important as the race itself and teams should be on their best performance on qualifying day. It is also somewhat remarkable that, since qualifying results become much more easily accessible, so for about half of all Formula 1 races through history, that first place qualifiers have won exactly half of all races, while all other positions 2-28 have won the same amount. 
-
-Lastly, we wanted to take a deeper look at different teams and what teams had the most success in the most recent F1 season that we have the complete result data for, 2022. To do this, we will create a line graph with ten different lines (for each of the ten different teams that competed), and we will count their total number of points after each race of the season and accumulate them as we go. 
-
-```{r}
-# creating the data frame
-races2022 <- simplified_races %>%
-  filter(year == "2022")
-
-results2022 <- results %>% # now we will make a table with just the fastest lap time from every year
-  filter(raceId %in% races2022$raceId) %>% # making sure we only look at races in 2022
-  left_join(races2022, by = "raceId") %>% # join with the 'races2022' table to see what year the race was
-  left_join(constructors, by = "constructorId") %>% # join with 'constructors' so we see all team information
-  arrange(raceId) # make sure the first race of the season is at the top
-
-# from here, we can begin to add the points after each race for each constructor in a new data frame
-cumulative_points <- results2022 %>%
-  group_by(constructorRef) %>%
-  mutate(Cumulative_Points = cumsum(points)) %>% # new variable that keeps tracks of each teams points after each race
-  rename("Constructor" = constructorRef) %>% # to allow for a more presentable graph
-  mutate(race_number = raceId - 1073) # this way, we can better track the race number within the season 
-
-# creating vectors with proper team names and colors corresponding to team colors for the line graph
-custom_team_names <- c( "Alfa Romeo", "AlphaTauri", "Alpine", "Aston Martin", "Ferrari", "Haas", "McLaren", "Mercedes", "Red Bull", "Williams")
-custom_colors <- c("darkred",  "lightblue",  "pink", "seagreen4", "red", "black", "orange", "greenyellow", "blue4", "dodgerblue")  
-
-# making the line graph with ggplot2
-ggplot(cumulative_points, aes(x = race_number, y = Cumulative_Points, color = Constructor)) +
-  geom_line() +
-  labs(x = "Race", y = "Cumulative Points Earned",
-       title = "Cumulative Points Earned by Team in 2022 Season") +
-  theme_minimal() + # easier to look at
-  theme(axis.text.x = element_text(size = 14, angle = 45, hjust = 1),  # rotating x-axis labels and adjusting font size
-        axis.text.y = element_text(size = 14),  # adjusting font size of y-axis labels
-        axis.title.x = element_text(size = 16),  # adjusting font size of x-axis label
-        axis.title.y = element_text(size = 16),  # adjusting font size of y-axis label
-        legend.key.size = unit(1.5, "lines"),  # increasing size and changing format of legend key
-        legend.text = element_text(size = 14),  # adjusting font size of legend text
-        legend.title = element_text(size = 16), # adjusting font size of legend title
-        plot.title = element_text(size = 19)) +  # adjusting font size of legend title
-  scale_color_manual(values = custom_colors, labels = custom_team_names) # injecting my custom colors and team names from earlier, crosschecked with the values in the 'cumulative_points' df to ensure values are correct 
-```
-
-From looking at the line graph that we produced, we can actually see that the team that had the strongest start by far, Ferrari, actually ended up in second by a large margin. As a matter of fact, by just looking at the top three teams in the final standings, we can see that each team followed a different pattern. Ferrari, like said before, had an extremely strong start, then leveled off, Mercedes had a somewhat slow start but stayed in it by having several really good races through the year, which are the giant spikes we can see, and lastly, Red Bull had a slow start but managed to gain points in every single race of the year, which ensured a large victory in the constructor's championship. From this, we can start to see that consistency is the key thing that teams should shoot for in order to try and win championships, rather than going out and trying to dominate every single race
-
-## Final Conclusions
- 
-From our project, we have made three key conclusions in terms of succeeding in Formula 1
-
-1) Lap times aren't everything:
-  
-  By the summary table comparing how many times the driver with the fastest lap has won the race, we can see that it has only happened in about 30% of races since 2004, so while it definitely is something teams and drivers should shoot for, it is definitely not the biggest factor in race success
-  
-2) Qualifying holds bigger stakes: 
-  
-  Compared to fastest lap times, qualifying holds a much bigger play in good race performance. Like seen in the bar graph discovering this subject earlier, qualifying first gives drivers the best shot at winning a race as 50% of all first place qualifiers have won that respective race. Teams can use this knowledge to better set up for race weekends by taking more time prepping the car for qualifying sessions and fans can use this information to better predict race results. 
-  
-3) Consistency is key:
-
-  Finally, in the last visualization we made, we saw that, in terms of chasing a world championship, consistency is the biggest thing that teams can shoot for during the season. The most consistent teams in the line graph above were far and beyond more successful. Teams can use this information to better prepare for seasons so that they can try and set themselves up for a successful season and most of all, to try and model a season like Red Bull had in 2022.
-
-
